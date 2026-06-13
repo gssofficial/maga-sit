@@ -1,0 +1,120 @@
+manga-site/
+ ├─ pages/
+ │   ├─ index.js
+ │   ├─ manga.js
+ │   ├─ admin.js
+ │   ├─ read/[id].js
+ ├─ public/
+ ├─ styles/
+ ├─ data/
+ │   └─ manga.json
+ ├─ package.json
+{
+  "name": "manga-site",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  }
+}
+{
+  "title": "God Slayer System",
+  "chapters": [
+    {
+      "id": 1,
+      "title": "Chapter 1",
+      "images": ["/1-1.jpg", "/1-2.jpg"]
+    }
+  ]
+}
+import Link from "next/link";
+
+export default function Home() {
+  return (
+    <div style={{ padding: 20 }}>
+      <h1>📚 God Slayer System</h1>
+
+      <Link href="/manga">
+        <button>Read Manga</button>
+      </Link>
+
+      <br /><br />
+
+      <Link href="/admin">
+        <button>Admin Panel</button>
+      </Link>
+    </div>
+  );
+}
+
+import data from "../data/manga.json";
+import Link from "next/link";
+
+export default function Manga() {
+  return (
+    <div style={{ padding: 20 }}>
+      <h1>{data.title}</h1>
+
+      {data.chapters.map((ch) => (
+        <div key={ch.id}>
+          <Link href={`/read/${ch.id}`}>
+            <p>{ch.title}</p>
+          </Link>
+        </div>
+      ))}
+    </div>
+  );
+}
+import { useRouter } from "next/router";
+import data from "../../data/manga.json";
+
+export default function Reader() {
+  const router = useRouter();
+  const { id } = router.query;
+
+  const chapter = data.chapters.find((c) => c.id == id);
+
+  if (!chapter) return <p>Loading...</p>;
+
+  return (
+    <div style={{ padding: 10, background: "#111", color: "#fff" }}>
+      <h2>{chapter.title}</h2>
+
+      {/* Webtoon Mode (Scroll) */}
+      <div>
+        {chapter.images.map((img, i) => (
+          <img key={i} src={img} style={{ width: "100%" }} />
+        ))}
+      </div>
+    </div>
+  );
+}
+import { useState } from "react";
+
+export default function Admin() {
+  const [title, setTitle] = useState("");
+
+  return (
+    <div style={{ padding: 20 }}>
+      <h1>Admin Panel</h1>
+
+      <input
+        placeholder="Chapter Title"
+        onChange={(e) => setTitle(e.target.value)}
+      />
+
+      <br /><br />
+
+      <button onClick={() => alert("Demo only - database မချိတ်ရသေး")}>
+        Publish Chapter
+      </button>
+    </div>
+  );
+}
